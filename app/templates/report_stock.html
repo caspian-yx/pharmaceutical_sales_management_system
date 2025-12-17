@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>库存汇总报表</title>
+    <style>
+        table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .container { text-align: center; margin: 20px 0; }
+        .total { font-weight: bold; font-size: 16px; background-color: #e0f7fa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>库存汇总报表（按仓库）</h1>
+
+        <table>
+            <tr>
+                <th>仓库名称</th>
+                <th>物资种类数</th>
+                <th>总库存数量</th>
+                <th>库存总价值（元）</th>
+            </tr>
+            {% for summary in stock_summary %}
+            <tr>
+                <td>{{ summary.name }}</td>
+                <td>{{ summary.material_count }}</td>
+                <td>{{ summary.total_stock }}</td>
+                <td>{{ summary.total_value }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">暂无库存数据</td></tr>
+            {% endfor %}
+            <tr class="total">
+                <td>总计</td>
+                <td>{{ stock_summary|sum(attribute='material_count') }}</td>
+                <td>{{ stock_summary|sum(attribute='total_stock') }}</td>
+                <td>{{ stock_summary|sum(attribute='total_value') }}</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

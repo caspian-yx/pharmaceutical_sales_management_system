@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>新增销售单</title>
+    <style>
+        .container { width: 600px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; }
+        input, select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-back { background-color: #6c757d; text-decoration: none; display: inline-block; padding: 10px; color: white; border-radius: 4px; }
+        .btn-group { display: flex; gap: 10px; }
+        .error { color: red; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>新增销售单</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="error">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <!-- 仓库下拉框 -->
+            <label for="warehouse_id">仓库 <span style="color: red;">*</span></label>
+            <select id="warehouse_id" name="warehouse_id" required>
+                <option value="">请选择仓库</option>
+                {% for warehouse in warehouses %}
+                <option value="{{ warehouse.id }}">{{ warehouse.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- 客户名称（可选下拉或输入，这里用下拉） -->
+            <label for="dept_name">客户名称 <span style="color: red;">*</span></label>
+            <select id="dept_name" name="dept_name" required>
+                <option value="">请选择部门</option>
+                {% for dept in departments %}
+                <option value="{{ dept }}">{{ dept }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- 销售日期（自动填充当前日期） -->
+            <label for="outbound_date">销售日期 <span style="color: red;">*</span></label>
+            <input type="date" id="outbound_date" name="outbound_date" required>
+
+            <!-- 物资下拉框（自动显示所有物资） -->
+            <label for="material_id">物资 <span style="color: red;">*</span></label>
+            <select id="material_id" name="material_id" required>
+                <option value="">请选择物资</option>
+                {% for material in materials %}
+                <option value="{{ material.id }}">{{ material.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- 销售数量 -->
+            <label for="quantity">销售数量 <span style="color: red;">*</span></label>
+            <input type="number" id="quantity" name="quantity" required min="1" placeholder="输入销售数量">
+
+            <!-- 备注 -->
+            <label for="remark">备注（可选）</label>
+            <input type="text" id="remark" name="remark" placeholder="说明出库原因">
+
+            <div class="btn-group">
+                <a href="/outbound/list" class="btn-back">返回列表</a>
+                <button type="submit">提交</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 自动填充当前日期的JavaScript -->
+    <script>
+        // 获取当前日期（格式：YYYY-MM-DD，适配HTML日期输入框）
+        const today = new Date().toISOString().split('T')[0];
+        // 设置日期输入框默认值为今天
+        document.getElementById('outbound_date').value = today;
+    </script>
+</body>
+</html>

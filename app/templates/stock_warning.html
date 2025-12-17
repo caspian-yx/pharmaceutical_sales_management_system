@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>低库存预警</title>
+    <style>
+        .container { width: 90%; margin: 0 auto; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background: #f8d7da; }
+        .warning-title { color: #721c24; font-size: 20px; }
+        .back-link { color: #2196F3; text-decoration: none; margin-bottom: 20px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('stock.stock_list') }}" class="back-link">← 返回库存列表</a>
+        <h1 class="warning-title">低库存预警（库存 ≤ {{ threshold }}）</h1>
+        
+        <table>
+            <tr>
+                <th>药品名称</th>
+                <th>分类</th>
+                <th>规格</th>
+                <th>单位</th>
+                <th>当前库存</th>
+                <th>操作</th>
+            </tr>
+            {% for item in low_stocks %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.category.name }}</td>
+                <td>{{ item.specification or '无' }}</td>
+                <td>{{ item.unit.name }}</td>
+                <td style="color: red; font-weight: bold;">{{ item.stock }}</td>
+                <td>
+                    <a href="{{ url_for('stock.stock_detail', material_id=item.id) }}">查看详情</a>
+                    <a href="{{ url_for('inbound.inbound_add') }}">申请入库</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center;">暂无低库存物资，库存状态良好</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>角色管理</title>
+    <style>
+        table { border-collapse: collapse; width: 70%; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 6px 12px; margin: 0 5px; text-decoration: none; border-radius: 4px; color: white; border: none; cursor: pointer; }
+        .add-btn { background-color: #4CAF50; }
+        .edit-btn { background-color: #2196F3; }
+        .del-btn { background-color: #f44336; }
+        .container { text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <!-- 精简版导航栏（只保留首页） -->
+<nav style="background-color: #2196F3; padding: 12px 0; position: sticky; top: 0; z-index: 999;">
+    <div style="width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <!-- 系统名称（点击也能回首页） -->
+        <a href="{{ url_for('index') }}" style="color: white; font-size: 18px; font-weight: bold; text-decoration: none;">库存管理系统</a>
+        
+        <!-- 只保留首页链接 -->
+        <div>
+            <a href="{{ url_for('index') }}" style="color: white; text-decoration: none; font-size: 14px;">返回首页</a>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <h1>角色管理</h1>
+        <button class="btn add-btn" onclick="window.location.href='{{ url_for('system.add_role') }}'">添加角色</button>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <p style="text-align: center; color: red; font-size: 16px;">{{ msg }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table>
+        <tr>
+            <th>角色ID</th>
+            <th>角色名称</th>
+            <th>权限描述</th>
+            <th>操作</th>
+        </tr>
+        {% for role in roles %}
+        <tr>
+            <td>{{ role.role_id }}</td>
+            <td>{{ role.role_name }}</td>
+            <td>{{ role.permissions or '无' }}</td>
+            <td>
+                <button class="btn edit-btn">编辑</button>
+                <button class="btn del-btn" onclick="confirm('确定删除？')">删除</button>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">暂无角色数据</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

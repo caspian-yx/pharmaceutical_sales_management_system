@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>销售管理</title>
+    <style>
+        table { border-collapse: collapse; width: 90%; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 6px 12px; margin: 0 5px; text-decoration: none; border-radius: 4px; color: white; }
+        .add-btn { background-color: #4CAF50; }
+        .view-btn { background-color: #17a2b8; }
+        .edit-btn { background-color: #2196F3; }
+        .del-btn { background-color: #f44336; }
+        .search-container { margin: 20px auto; width: 90%; text-align: center; }
+    </style>
+</head>
+<body>
+    <!-- 精简版导航栏（只保留首页） -->
+<nav style="background-color: #2196F3; padding: 12px 0; position: sticky; top: 0; z-index: 999;">
+    <div style="width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <!-- 系统名称（点击也能回首页） -->
+        <a href="{{ url_for('index') }}" style="color: white; font-size: 18px; font-weight: bold; text-decoration: none;">库存管理系统</a>
+        
+        <!-- 只保留首页链接 -->
+        <div>
+            <a href="{{ url_for('index') }}" style="color: white; text-decoration: none; font-size: 14px;">返回首页</a>
+        </div>
+    </div>
+</nav>
+    <h1 style="text-align: center;">销售单列表</h1>
+
+    <!-- 搜索表单 -->
+    <div class="search-container">
+        <form method="get" action="{{ url_for('outbound.outbound_list') }}">
+            <input type="text" name="keyword" placeholder="搜索销售单号、部门、仓库..."
+                   value="{{ keyword if keyword else '' }}"
+                   style="width: 300px; padding: 8px; margin-right: 10px;">
+            <button type="submit" class="btn edit-btn">搜索</button>
+            {% if keyword %}
+                <a href="{{ url_for('outbound.outbound_list') }}" class="btn del-btn">清除</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div style="text-align: center; margin: 10px;">
+        <a href="{{ url_for('outbound.outbound_add') }}" class="btn add-btn">新增销售单</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <p style="text-align: center; color: red;">{{ msg }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table>
+        <tr>
+            <th>销售单号</th>
+            <th>客户名称</th>
+            <th>仓库</th>
+            <th>销售日期</th>
+            <th>审核状态</th>
+            <th>操作</th>
+        </tr>
+        {% for outbound in outbounds %}
+        <tr>
+            <td>{{ outbound.outbound_id }}</td>
+            <td>{{ outbound.dept_name }}</td>
+            <td>{{ outbound.warehouse.name }}</td>  <!-- 关联仓库名称 -->
+            <td>{{ outbound.outbound_date }}</td>
+            <td>
+                {% if outbound.audit_status == 0 %}未审核{% elif outbound.audit_status == 1 %}已通过{% else %}已驳回{% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('outbound.outbound_detail', outbound_id=outbound.outbound_id) }}" class="btn view-btn">查看</a>
+                <a href="{{ url_for('outbound.outbound_edit', outbound_id=outbound.outbound_id) }}" class="btn edit-btn">编辑</a>
+                <a href="{{ url_for('outbound.outbound_delete', outbound_id=outbound.outbound_id) }}" class="btn del-btn" onclick="return confirm('确定删除？')">删除</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">暂无销售单数据</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>添加仓库</title>
+    <style>
+        .container { width: 500px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; font-size: 16px; }
+        input { padding: 8px; font-size: 14px; }
+        button { padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .btn-back { background-color: #6c757d; text-decoration: none; display: inline-block; padding: 10px; color: white; border-radius: 4px; }
+        .btn-group { display: flex; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>添加仓库</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="color: red;">{{ message }}</div>  <!-- 错误消息红色显示 -->
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <label for="name">仓库名称 <span style="color: red;">*</span></label>
+            <input type="text" id="name" name="name" required placeholder="输入仓库名称（如一号仓）" value="{{ form_data.get('name', '') }}">
+
+            <label for="location">位置 <span style="color: red;">*</span></label>
+            <input type="text" id="location" name="location" required placeholder="输入仓库位置（如东区A栋）" value="{{ form_data.get('location', '') }}">
+
+            <label for="manager">负责人</label>
+            <input type="text" id="manager" name="manager" placeholder="输入负责人姓名" value="{{ form_data.get('manager', '') }}">
+
+            <label for="phone">电话</label>
+            <input type="text" id="phone" name="phone" placeholder="输入联系电话" value="{{ form_data.get('phone', '') }}">
+
+            <div class="btn-group">
+                <a href="/warehouse/list" class="btn-back">返回列表</a>
+                <button type="submit">提交</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

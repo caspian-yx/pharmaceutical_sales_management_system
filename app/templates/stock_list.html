@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>库存管理 - 完整列表</title>
+    <style>
+        .container { width: 95%; margin: 0 auto; padding: 20px; }
+        .search-bar { margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 5px; }
+        .filter-group { display: inline-block; margin-right: 20px; }
+        label { margin-right: 8px; font-weight: bold; }
+        input, select { padding: 6px 10px; margin-right: 10px; }
+        button { padding: 6px 15px; background: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #45a049; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background: #f2f2f2; }
+        .low-stock { color: red; font-weight: bold; }
+        .operation a { margin: 0 5px; color: #2196F3; text-decoration: none; }
+        .operation a:hover { text-decoration: underline; }
+        .header-actions { margin-bottom: 15px; text-align: right; }
+        .sort-link { color: #000; text-decoration: none; }
+        .sort-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <!-- 精简版导航栏（只保留首页） -->
+<nav style="background-color: #2196F3; padding: 12px 0; position: sticky; top: 0; z-index: 999;">
+    <div style="width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <!-- 系统名称（点击也能回首页） -->
+        <a href="{{ url_for('index') }}" style="color: white; font-size: 18px; font-weight: bold; text-decoration: none;">库存管理系统</a>
+        
+        <!-- 只保留首页链接 -->
+        <div>
+            <a href="{{ url_for('index') }}" style="color: white; text-decoration: none; font-size: 14px;">返回首页</a>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <h1>库存管理系统</h1>
+        
+        <!-- 快捷操作 -->
+        <div class="header-actions">
+            <a href="{{ url_for('stock.stock_warning') }}" style="color: red; font-weight: bold;">低库存预警</a>
+        </div>
+
+        <!-- 搜索与筛选 -->
+        <div class="search-bar">
+            <form method="get" action="{{ url_for('stock.stock_list') }}">
+                <!-- 关键词搜索 -->
+                <div class="filter-group">
+                    <label>搜索：</label>
+                    <input type="text" name="keyword" placeholder="药品名称/规格/分类" value="{{ keyword }}">
+                </div>
+
+                <!-- 分类筛选 -->
+                <div class="filter-group">
+                    <label>分类：</label>
+                    <select name="category_id">
+                        <option value="">全部分类</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if selected_category == category.id|string %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- 排序方式 -->
+                <div class="filter-group">
+                    <label>排序：</label>
+                    <select name="sort_by" onchange="this.form.submit()">
+                        <option value="stock" {% if sort_by == 'stock' %}selected{% endif %}>按库存</option>
+                        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>按名称</option>
+                    </select>
+                    <select name="order" onchange="this.form.submit()">
+                        <option value="asc" {% if order == 'asc' %}selected{% endif %}>升序</option>
+                        <option value="desc" {% if order == 'desc' %}selected{% endif %}>降序</option>
+                    </select>
+                </div>
+
+                <button type="submit">查询</button>
+                {% if keyword or selected_category %}
+                    <a href="{{ url_for('stock.stock_list') }}"><button type="button">重置</button></a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- 库存列表 -->
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>
+                    药品名称
+                    {% if sort_by == 'name' %}
+                        <a href="{{ url_for('stock.stock_list', sort_by='name', order='asc' if order == 'desc' else 'desc', keyword=keyword, category_id=selected_category) }}" class="sort-link">
+                            {{ '↑' if order == 'asc' else '↓' }}
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('stock.stock_list', sort_by='name', order='asc', keyword=keyword, category_id=selected_category) }}" class="sort-link">↕</a>
+                    {% endif %}
+                </th>
+                <th>规格</th>
+                <th>分类</th>
+                <th>单位</th>
+                <th>
+                    当前库存
+                    {% if sort_by == 'stock' %}
+                        <a href="{{ url_for('stock.stock_list', sort_by='stock', order='asc' if order == 'desc' else 'desc', keyword=keyword, category_id=selected_category) }}" class="sort-link">
+                            {{ '↑' if order == 'asc' else '↓' }}
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('stock.stock_list', sort_by='stock', order='asc', keyword=keyword, category_id=selected_category) }}" class="sort-link">↕</a>
+                    {% endif %}
+                </th>
+                <th>操作</th>
+            </tr>
+            {% for item in stocks %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.specification or '无' }}</td>
+                <td>{{ item.category.name }}</td>
+                <td>{{ item.unit.name }}</td>
+                <td class="{% if item.stock <= 10 %}low-stock{% endif %}">
+                    {{ item.stock }}
+                </td>
+                <td class="operation">
+                    <a href="{{ url_for('stock.stock_detail', material_id=item.id) }}">详情</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: #666;">暂无库存数据</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

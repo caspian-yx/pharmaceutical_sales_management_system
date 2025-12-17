@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>添加用户</title>
+    <style>
+        .container { width: 500px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; font-size: 16px; }
+        input, select { padding: 8px; font-size: 14px; }
+        button { padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>添加用户</h1>
+        <form method="POST">
+            <label for="username">登录账号 <span style="color: red;">*</span></label>
+            <input type="text" id="username" name="username" required placeholder="输入登录账号">
+
+            <label for="password">登录密码 <span style="color: red;">*</span></label>
+            <input type="password" id="password" name="password" required placeholder="输入登录密码">
+
+            <label for="real_name">真实姓名</label>
+            <input type="text" id="real_name" name="real_name" placeholder="输入真实姓名">
+
+            <label for="role_id">角色 <span style="color: red;">*</span></label>
+            <select id="role_id" name="role_id" required>
+                {% for role in roles %}
+                <option value="{{ role.role_id }}">{{ role.role_name }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">添加用户</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>编辑销售单</title>
+    <style>
+        .container { width: 800px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; }
+        input, select, textarea { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .error { color: red; text-align: center; }
+        .success { color: green; text-align: center; }
+        .detail-row { display: grid; grid-template-columns: 2fr 2fr 1fr 60px; gap: 10px; align-items: end; margin-bottom: 10px; }
+        .detail-row label { margin: 0; }
+        .detail-row input, .detail-row select { margin: 0; }
+        #details-container { border: 1px solid #ddd; padding: 15px; border-radius: 4px; background: #f9f9f9; }
+        .btn-add { background-color: #4CAF50; padding: 5px 15px; font-size: 14px; }
+        .btn-remove { background-color: #f44336; padding: 5px 10px; font-size: 14px; }
+        .btn-group { display: flex; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>编辑销售单 #{{ outbound.outbound_id }}</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <label for="dept_name">客户名称 <span style="color: red;">*</span></label>
+            <input type="text" id="dept_name" name="dept_name" required value="{{ outbound.dept_name }}">
+
+            <label for="warehouse_id">仓库 <span style="color: red;">*</span></label>
+            <select id="warehouse_id" name="warehouse_id" required>
+                {% for warehouse in warehouses %}
+                <option value="{{ warehouse.id }}" {% if warehouse.id == outbound.warehouse_id %}selected{% endif %}>
+                    {{ warehouse.name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <label for="outbound_date">销售日期 <span style="color: red;">*</span></label>
+            <input type="date" id="outbound_date" name="outbound_date" value="{{ outbound.outbound_date }}" required>
+
+            <label for="audit_status">审核状态 <span style="color: red;">*</span></label>
+            <select id="audit_status" name="audit_status" required>
+                <option value="0" {% if outbound.audit_status == 0 %}selected{% endif %}>未审核</option>
+                <option value="1" {% if outbound.audit_status == 1 %}selected{% endif %}>已通过</option>
+                <option value="2" {% if outbound.audit_status == 2 %}selected{% endif %}>已驳回</option>
+            </select>
+
+            <label for="remark">备注</label>
+            <textarea id="remark" name="remark" rows="2">{{ outbound.remark or '' }}</textarea>
+
+            <h3>销售明细</h3>
+            <div id="details-container">
+                <div id="detail-list">
+                    {% if details %}
+                        {% for detail in details %}
+                        <div class="detail-row">
+                            <div>
+                                <label>药品名称 *</label>
+                                <input type="text" name="material_name[]" value="{{ detail.medicine.name }}" required>
+                            </div>
+                            <div>
+                                <label>规格 *</label>
+                                <input type="text" name="material_specification[]" value="{{ detail.medicine.specification }}" required>
+                            </div>
+                            <div>
+                                <label>数量 *</label>
+                                <input type="number" name="quantity[]" value="{{ detail.quantity }}" min="1" required>
+                            </div>
+                            <button type="button" class="btn-remove" onclick="removeRow(this)">删除</button>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="detail-row">
+                            <div>
+                                <label>药品名称 *</label>
+                                <input type="text" name="material_name[]" required>
+                            </div>
+                            <div>
+                                <label>规格 *</label>
+                                <input type="text" name="material_specification[]" required>
+                            </div>
+                            <div>
+                                <label>数量 *</label>
+                                <input type="number" name="quantity[]" min="1" required>
+                            </div>
+                            <button type="button" class="btn-remove" onclick="removeRow(this)">删除</button>
+                        </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn-add" onclick="addRow()">+ 添加明细</button>
+            </div>
+
+            <div class="btn-group">
+                <a href="/outbound/list" style="text-decoration: none; color: white; background-color: #6c757d; padding: 10px; border-radius: 4px;">返回列表</a>
+                <button type="submit">保存修改</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function addRow() {
+            const container = document.getElementById('detail-list');
+            const newRow = document.createElement('div');
+            newRow.className = 'detail-row';
+            newRow.innerHTML = `
+                <div>
+                    <label>药品名称 *</label>
+                    <input type="text" name="material_name[]" required>
+                </div>
+                <div>
+                    <label>规格 *</label>
+                    <input type="text" name="material_specification[]" required>
+                </div>
+                <div>
+                    <label>数量 *</label>
+                    <input type="number" name="quantity[]" min="1" required>
+                </div>
+                <button type="button" class="btn-remove" onclick="removeRow(this)">删除</button>
+            `;
+            container.appendChild(newRow);
+        }
+
+        function removeRow(btn) {
+            const rows = document.querySelectorAll('.detail-row');
+            if (rows.length > 1) {
+                btn.parentElement.remove();
+            } else {
+                alert('至少保留一条明细');
+            }
+        }
+    </script>
+</body>
+</html>

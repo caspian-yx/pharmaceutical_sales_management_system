@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户管理</title>
+    <style>
+        table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 6px 12px; margin: 0 5px; text-decoration: none; border-radius: 4px; color: white; border: none; cursor: pointer; }
+        .add-btn { background-color: #4CAF50; }
+        .edit-btn { background-color: #2196F3; }
+        .del-btn { background-color: #f44336; }
+        .container { text-align: center; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <!-- 精简版导航栏（只保留首页） -->
+<nav style="background-color: #2196F3; padding: 12px 0; position: sticky; top: 0; z-index: 999;">
+    <div style="width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <!-- 系统名称（点击也能回首页） -->
+        <a href="{{ url_for('index') }}" style="color: white; font-size: 18px; font-weight: bold; text-decoration: none;">库存管理系统</a>
+        
+        <!-- 只保留首页链接 -->
+        <div>
+            <a href="{{ url_for('index') }}" style="color: white; text-decoration: none; font-size: 14px;">返回首页</a>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <h1>用户管理</h1>
+        <button class="btn add-btn" onclick="window.location.href='{{ url_for('system.add_user') }}'">添加用户</button>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <p style="text-align: center; color: red; font-size: 16px;">{{ msg }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table>
+        <tr>
+            <th>用户ID</th>
+            <th>登录账号</th>
+            <th>真实姓名</th>
+            <th>角色</th>
+            <th>状态</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.user_id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.real_name or '无' }}</td>
+            <td>{{ user.role.role_name }}</td>
+            <td>{{ '激活' if user.is_active else '禁用' }}</td>
+            <td>{{ user.create_time.strftime('%Y-%m-%d') }}</td>
+            <td>
+                <button class="btn edit-btn">编辑</button>
+                <button class="btn del-btn" onclick="confirm('确定删除？')">删除</button>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">暂无用户数据</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

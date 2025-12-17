@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>操作日志</title>
+    <style>
+        table { border-collapse: collapse; width: 90%; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .container { text-align: center; margin: 20px 0; }
+        .log-time { font-size: 14px; }
+    </style>
+</head>
+<body>
+    <!-- 精简版导航栏（只保留首页） -->
+<nav style="background-color: #2196F3; padding: 12px 0; position: sticky; top: 0; z-index: 999;">
+    <div style="width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <!-- 系统名称（点击也能回首页） -->
+        <a href="{{ url_for('index') }}" style="color: white; font-size: 18px; font-weight: bold; text-decoration: none;">库存管理系统</a>
+        
+        <!-- 只保留首页链接 -->
+        <div>
+            <a href="{{ url_for('index') }}" style="color: white; text-decoration: none; font-size: 14px;">返回首页</a>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <h1>系统操作日志</h1>
+    </div>
+
+    <table>
+        <tr>
+            <th>日志ID</th>
+            <th>操作人</th>
+            <th>操作内容</th>
+            <th>操作时间</th>
+            <th>操作IP</th>
+            <th>操作详情</th>
+        </tr>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.log_id }}</td>
+            <td>{{ log.user.real_name or log.user.username }}</td>
+            <td>{{ log.operation }}</td>
+            <td class="log-time">{{ log.operation_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>{{ log.ip_address or '未知' }}</td>
+            <td>{{ log.detail }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">暂无操作日志</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

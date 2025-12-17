@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>添加供应商</title>
+    <style>
+        .container { width: 600px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; font-size: 16px; }
+        input { padding: 8px; font-size: 14px; }
+        button { padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .btn-back { background-color: #6c757d; text-decoration: none; display: inline-block; padding: 10px; color: white; border-radius: 4px; }
+        .btn-group { display: flex; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>添加供应商</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="color: red;">{{ message }}</div>  <!-- 错误消息红色显示 -->
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <label for="name">供应商名称 <span style="color: red;">*</span></label>
+            <input type="text" id="name" name="name" required placeholder="输入供应商名称（如XX医药公司）">
+
+            <label for="license_number">药品经营许可证号</label>
+            <input type="text" id="license_number" name="license_number" placeholder="输入许可证号（如药经123456）">
+
+            <label for="contact">联系人</label>
+            <input type="text" id="contact" name="contact" placeholder="输入联系人姓名">
+
+            <label for="phone">联系电话</label>
+            <input type="text" id="phone" name="phone" placeholder="输入联系电话（如138xxxx1234）">
+
+            <label for="address">地址</label>
+            <input type="text" id="address" name="address" placeholder="输入供应商地址">
+
+            <div class="btn-group">
+                <a href="/supplier/list" class="btn-back">返回列表</a>
+                <button type="submit">提交</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

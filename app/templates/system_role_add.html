@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>添加角色</title>
+    <style>
+        .container { width: 500px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; font-size: 16px; }
+        input, textarea { padding: 8px; font-size: 14px; }
+        textarea { height: 80px; }
+        button { padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>添加角色</h1>
+        <form method="POST">
+            <label for="role_name">角色名称 <span style="color: red;">*</span></label>
+            <input type="text" id="role_name" name="role_name" required placeholder="输入角色名称（如管理员、仓库员）">
+
+            <label for="permissions">权限描述</label>
+            <textarea id="permissions" name="permissions" placeholder="输入权限描述（如material:add,material:edit）"></textarea>
+
+            <button type="submit">添加角色</button>
+        </form>
+    </div>
+</body>
+</html>

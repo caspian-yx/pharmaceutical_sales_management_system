@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>编辑供应商</title>
+    <style>
+        .container { width: 600px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; font-size: 16px; }
+        input { padding: 8px; font-size: 14px; }
+        button { padding: 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>编辑供应商 #{{ supplier.id }}</h1>
+        <form method="POST">
+            <label for="name">供应商名称 <span style="color: red;">*</span></label>
+            <input type="text" id="name" name="name" value="{{ supplier.name }}" required>
+
+            <label for="license_number">药品经营许可证号</label>
+            <input type="text" id="license_number" name="license_number" value="{{ supplier.license_number or '' }}">
+
+            <label for="contact">联系人</label>
+            <input type="text" id="contact" name="contact" value="{{ supplier.contact or '' }}">
+
+            <label for="phone">联系电话</label>
+            <input type="text" id="phone" name="phone" value="{{ supplier.phone or '' }}">
+
+            <label for="address">地址</label>
+            <input type="text" id="address" name="address" value="{{ supplier.address or '' }}">
+
+            <button type="submit">保存修改</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>供应商管理</title>
+    <style>
+        table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 6px 12px; margin: 0 5px; text-decoration: none; border-radius: 4px; color: white; }
+        .add-btn { background-color: #4CAF50; }
+        .edit-btn { background-color: #2196F3; }
+        .del-btn { background-color: #f44336; }
+        .container { text-align: center; margin: 20px 0; }
+        .search-container { margin: 20px auto; width: 80%; text-align: center; }
+    </style>
+</head>
+<body>
+    <!-- 精简版导航栏（只保留首页） -->
+<nav style="background-color: #2196F3; padding: 12px 0; position: sticky; top: 0; z-index: 999;">
+    <div style="width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <!-- 系统名称（点击也能回首页） -->
+        <a href="{{ url_for('index') }}" style="color: white; font-size: 18px; font-weight: bold; text-decoration: none;">库存管理系统</a>
+        
+        <!-- 只保留首页链接 -->
+        <div>
+            <a href="{{ url_for('index') }}" style="color: white; text-decoration: none; font-size: 14px;">返回首页</a>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <h1>供应商列表</h1>
+        <!-- 搜索表单 -->
+        <div class="search-container">
+            <form method="get" action="{{ url_for('supplier.supplier_list') }}">
+                <input type="text" name="keyword" placeholder="搜索供应商名称、联系人、电话..."
+                       value="{{ keyword if keyword else '' }}"
+                       style="width: 300px; padding: 8px; margin-right: 10px;">
+                <button type="submit" class="btn edit-btn">搜索</button>
+                {% if keyword %}
+                    <a href="{{ url_for('supplier.supplier_list') }}" class="btn del-btn">清除</a>
+                {% endif %}
+            </form>
+        </div>
+        <a href="{{ url_for('supplier.supplier_add') }}" class="btn add-btn">添加供应商</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <p style="text-align: center; color: red; font-size: 16px;">{{ msg }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>供应商名称</th>
+            <th>经营许可证号</th>
+            <th>联系人</th>
+            <th>联系电话</th>
+            <th>地址</th>
+            <th>操作</th>
+        </tr>
+        {% for supplier in suppliers %}
+        <tr>
+            <td>{{ supplier.id }}</td>
+            <td>{{ supplier.name }}</td>
+            <td>{{ supplier.license_number or '无' }}</td>
+            <td>{{ supplier.contact }}</td>
+            <td>{{ supplier.phone }}</td>
+            <td>{{ supplier.address or '无' }}</td>
+            <td>
+                <!-- 修正：id=supplier.id 代替 id=supplier.supplier_id -->
+                <a href="{{ url_for('supplier.supplier_edit', id=supplier.id) }}" class="btn edit-btn">编辑</a>
+                <a href="{{ url_for('supplier.supplier_delete', id=supplier.id) }}" class="btn del-btn" onclick="return confirm('确定删除？')">删除</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">暂无供应商数据</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

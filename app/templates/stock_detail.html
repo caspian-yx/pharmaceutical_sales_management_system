@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ material.name }} - 库存详情</title>
+    <style>
+        .container { width: 90%; margin: 0 auto; padding: 20px; }
+        .info-card { border: 1px solid #ddd; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .info-item { margin: 10px 0; }
+        .back-link { color: #2196F3; text-decoration: none; margin-bottom: 20px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('stock.stock_list') }}" class="back-link">← 返回库存列表</a>
+        <h1>{{ material.name }} - 库存详情</h1>
+
+        <!-- 只显示物资基本信息（不涉及入库/出库记录） -->
+        <div class="info-card">
+            <div class="info-item"><strong>物资ID：</strong>{{ material.id }}</div>
+            <div class="info-item"><strong>名称：</strong>{{ material.name }}</div>
+            <div class="info-item"><strong>规格：</strong>{{ material.specification or '无' }}</div>
+            <div class="info-item"><strong>分类：</strong>{{ material.category.name }}</div>
+            <div class="info-item"><strong>单位：</strong>{{ material.unit.name }}</div>
+            <div class="info-item"><strong>当前库存：</strong>
+                <span style="color: {% if material.stock <= 10 %}red{% else %}green{% endif %}; font-weight: bold;">
+                    {{ material.stock }} {{ material.unit.name }}
+                </span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

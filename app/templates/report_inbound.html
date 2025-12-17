@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>入库统计报表</title>
+    <style>
+        table { border-collapse: collapse; width: 90%; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .container { text-align: center; margin: 20px 0; }
+        .form-group { display: inline-flex; gap: 10px; align-items: center; margin-bottom: 20px; }
+        .form-group input, .form-group button { padding: 8px; }
+        button { background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .total { font-weight: bold; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>入库统计报表（按供应商）</h1>
+        <form method="GET" class="form-group">
+            <label>开始日期：</label>
+            <input type="date" name="start_date" value="{{ start_date }}">
+            <label>结束日期：</label>
+            <input type="date" name="end_date" value="{{ end_date }}">
+            <button type="submit">查询</button>
+        </form>
+
+        <table>
+            <tr>
+                <th>供应商名称</th>
+                <th>采购单数</th>
+                <th>总采购数量</th>
+                <th>总入库金额（元）</th>
+            </tr>
+            {% for stat in supplier_stats %}
+            <tr>
+                <td>{{ stat.name }}</td>
+                <td>{{ stat.count }}</td>
+                <td>{{ stat.total_quantity }}</td>
+                <td>{{ stat.total_amount }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4">该时间段内无入库数据</td></tr>
+            {% endfor %}
+            <tr class="total">
+                <td>合计</td>
+                <td>{{ supplier_stats|sum(attribute='count') }}</td>
+                <td>{{ supplier_stats|sum(attribute='total_quantity') }}</td>
+                <td>{{ supplier_stats|sum(attribute='total_amount') }}</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

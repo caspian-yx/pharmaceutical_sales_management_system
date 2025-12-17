@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>添加物资类别</title>
+    <style>
+        .container { width: 500px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; font-size: 16px; }
+        input { padding: 8px; font-size: 14px; }
+        button { padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .btn-back { background-color: #6c757d; text-decoration: none; display: inline-block; padding: 10px; color: white; border-radius: 4px; }
+        .btn-group { display: flex; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>添加物资类别</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="color: red; padding: 10px; background-color: #ffe6e6; border-radius: 4px; margin-bottom: 10px;">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <label for="category_name">类别名称 <span style="color: red;">*</span></label>
+            <input type="text" id="category_name" name="category_name" value="{{ form_data.category_name or '' }}" required placeholder="输入类别名称（如西药、中成药）">
+
+            <label for="remark">备注</label>
+            <input type="text" id="remark" name="remark" value="{{ form_data.remark or '' }}" placeholder="可选">
+
+            <div class="btn-group">
+                <a href="/material_category/list" class="btn-back">返回列表</a>
+                <button type="submit">提交</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

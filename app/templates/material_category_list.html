@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>物资类别管理</title>
+    <style>
+        table { border-collapse: collapse; width: 70%; margin: 20px auto; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 6px 12px; margin: 0 5px; text-decoration: none; border-radius: 4px; color: white; }
+        .add-btn { background-color: #4CAF50; }
+        .edit-btn { background-color: #2196F3; }
+        .del-btn { background-color: #f44336; }
+        .container { text-align: center; margin: 20px 0; }
+        .search-container { margin: 20px auto; width: 70%; text-align: center; }
+    </style>
+</head>
+<body>
+    <!-- 精简版导航栏（只保留首页） -->
+<nav style="background-color: #2196F3; padding: 12px 0; position: sticky; top: 0; z-index: 999;">
+    <div style="width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <!-- 系统名称（点击也能回首页） -->
+        <a href="{{ url_for('index') }}" style="color: white; font-size: 18px; font-weight: bold; text-decoration: none;">库存管理系统</a>
+        
+        <!-- 只保留首页链接 -->
+        <div>
+            <a href="{{ url_for('index') }}" style="color: white; text-decoration: none; font-size: 14px;">返回首页</a>
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        <h1>物资类别列表</h1>
+        <!-- 搜索表单（url_for正确，保持不变） -->
+        <div class="search-container">
+            <form method="get" action="{{ url_for('material_category.category_list') }}">
+                <input type="text" name="keyword" placeholder="搜索类别名称..."
+                       value="{{ keyword if keyword else '' }}"
+                       style="width: 300px; padding: 8px; margin-right: 10px;">
+                <button type="submit" class="btn edit-btn">搜索</button>
+                {% if keyword %}
+                    <a href="{{ url_for('material_category.category_list') }}" class="btn del-btn">清除</a>
+                {% endif %}
+            </form>
+        </div>
+        <a href="{{ url_for('material_category.category_add') }}" class="btn add-btn">添加类别</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages %}
+                <p style="text-align: center; color: red; font-size: 16px;">{{ msg }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table>
+        <tr>
+            <th>类别ID</th>
+            <th>类别名称</th>
+            <th>备注</th>
+            <th>操作</th>
+        </tr>
+        {% for category in categories %}
+        <tr>
+            <!-- 修正：使用模型的id字段（而非category_id） -->
+            <td>{{ category.id }}</td>
+            <!-- 修正：使用模型的name字段（而非category_name） -->
+            <td>{{ category.name }}</td>
+            <td>{{ category.remark or '无' }}</td>
+            <td>
+                <!-- 修正：传递id参数（category.id） -->
+                <a href="{{ url_for('material_category.category_edit', id=category.id) }}" class="btn edit-btn">编辑</a>
+                <a href="{{ url_for('material_category.category_delete', id=category.id) }}" class="btn del-btn" onclick="return confirm('确定删除？')">删除</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">暂无类别数据</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>编辑仓库</title>
+    <style>
+        .container { width: 500px; margin: 50px auto; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; font-size: 16px; }
+        input { padding: 8px; font-size: 14px; }
+        button { padding: 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>编辑仓库 #{{ warehouse.id }}</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="color: red;">{{ message }}</div>  <!-- 错误消息红色显示 -->
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <label for="name">仓库名称 <span style="color: red;">*</span></label>
+            <input type="text" id="name" name="name" value="{{ warehouse.name }}" required>
+
+            <label for="location">位置 <span style="color: red;">*</span></label>
+            <input type="text" id="location" name="location" value="{{ warehouse.location or '' }}" required>
+
+            <label for="manager">负责人</label>
+            <input type="text" id="manager" name="manager" value="{{ warehouse.manager or '' }}">
+
+            <label for="phone">电话</label>
+            <input type="text" id="phone" name="phone" value="{{ warehouse.phone or '' }}">
+
+            <div style="display: flex; gap: 10px;">
+                <a href="/warehouse/list" style="padding: 10px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px;">返回列表</a>
+                <button type="submit">保存修改</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

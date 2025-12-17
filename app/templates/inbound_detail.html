@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>采购单详情</title>
+    <style>
+        .container { width: 900px; margin: 50px auto; padding: 20px; background: #f9f9f9; border-radius: 8px; }
+        h1 { text-align: center; color: #333; }
+        .info-section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .info-row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; margin-bottom: 10px; }
+        .info-label { font-weight: bold; color: #555; }
+        .info-value { color: #333; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 14px; }
+        .status-0 { background-color: #ffc107; color: white; }
+        .status-1 { background-color: #4CAF50; color: white; }
+        .status-2 { background-color: #f44336; color: white; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #2196F3; color: white; }
+        .total-row { background-color: #f0f0f0; font-weight: bold; }
+        .btn { padding: 10px 20px; text-decoration: none; border-radius: 4px; color: white; display: inline-block; margin: 5px; }
+        .btn-back { background-color: #6c757d; }
+        .btn-edit { background-color: #2196F3; }
+        .btn-group { text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>采购单详情</h1>
+
+        <div class="info-section">
+            <h3>基本信息</h3>
+            <div class="info-row">
+                <div class="info-label">采购单号：</div>
+                <div class="info-value">{{ inbound.inbound_id }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">供应商：</div>
+                <div class="info-value">{{ inbound.supplier.name }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">仓库：</div>
+                <div class="info-value">{{ inbound.warehouse.name }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">采购日期：</div>
+                <div class="info-value">{{ inbound.inbound_date }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">审核状态：</div>
+                <div class="info-value">
+                    {% if inbound.audit_status == 0 %}
+                        <span class="status-badge status-0">未审核</span>
+                    {% elif inbound.audit_status == 1 %}
+                        <span class="status-badge status-1">已通过</span>
+                    {% else %}
+                        <span class="status-badge status-2">已驳回</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">备注：</div>
+                <div class="info-value">{{ inbound.remark or '无' }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">创建时间：</div>
+                <div class="info-value">{{ inbound.create_time.strftime('%Y-%m-%d %H:%M:%S') if inbound.create_time else '未知' }}</div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>采购明细</h3>
+            {% if details %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>药品名称</th>
+                        <th>规格</th>
+                        <th>数量</th>
+                        <th>单价（元）</th>
+                        <th>金额（元）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detail in details %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ detail.medicine.name }}</td>
+                        <td>{{ detail.medicine.specification }}</td>
+                        <td>{{ detail.quantity }}</td>
+                        <td>{{ "%.2f"|format(detail.unit_price) }}</td>
+                        <td>{{ "%.2f"|format(detail.amount) }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="total-row">
+                        <td colspan="3">合计</td>
+                        <td>{{ details|sum(attribute='quantity') }}</td>
+                        <td>-</td>
+                        <td>{{ "%.2f"|format(details|sum(attribute='amount')) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            {% else %}
+            <p style="text-align: center; color: #999;">暂无明细数据</p>
+            {% endif %}
+        </div>
+
+        <div class="btn-group">
+            <a href="{{ url_for('inbound.inbound_list') }}" class="btn btn-back">返回列表</a>
+            <a href="{{ url_for('inbound.inbound_edit', inbound_id=inbound.inbound_id) }}" class="btn btn-edit">编辑</a>
+        </div>
+    </div>
+</body>
+</html>
